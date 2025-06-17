@@ -1,0 +1,35 @@
+set(CORE_SOURCES
+    main.cpp
+    Minecraft.cpp
+    Player.cpp
+    input.cpp
+    Textures.cpp
+    lib/Timer.cpp
+
+    level/Frustum.cpp
+    level/Level.cpp
+    level/Chunk.cpp
+    level/LevelRenderer.cpp
+    level/Tessellator.cpp
+)
+
+set(GLAD_SOURCE 
+    ${CMAKE_SOURCE_DIR}/glad/src/glad.c
+)
+add_executable(Minecraft ${CORE_SOURCES} ${GLAD_SOURCE})
+
+# Include directories for glad and root include
+target_include_directories(Minecraft PRIVATE
+    ${GLAD_ROOT}/include
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+# Link against glfw
+target_link_libraries(Minecraft PRIVATE zlibstatic glfw opengl32)
+
+# Copy resources folder after build (for all configs)
+add_custom_command(TARGET Minecraft POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/Source/resources
+        $<TARGET_FILE_DIR:Minecraft>/resources
+)
